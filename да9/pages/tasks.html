@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачи — AURA OS</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/seasonal-design.css">
+    <style>
+        .task-form { display:flex; gap:10px; margin:25px 0; }
+        .task-form input { flex:1; min-width:0; background:#141416; border:1px solid #29292e; border-radius:8px; color:#f3f0ed; padding:14px; font:inherit; outline:none; }
+        .task-form input:focus { border-color:#ff794f; }
+        .task-form button, .history-toggle { border:0; border-radius:8px; background:#ff794f; color:#17100e; padding:0 20px; font-weight:700; cursor:pointer; }
+        .task-list { display:grid; gap:10px; }
+        .task-item { display:flex; align-items:center; gap:12px; background:#141416; border:1px solid #29292e; border-radius:10px; padding:16px; }
+        .task-item input { accent-color:#ff794f; width:18px; height:18px; cursor:pointer; flex-shrink:0; }
+        .task-name { flex:1; overflow-wrap:anywhere; }
+        .task-item.done .task-name { color:#85838c; text-decoration:line-through; }
+        .delete-task { background:transparent; border:0; color:#85838c; font-size:18px; cursor:pointer; }
+        .delete-task:hover { color:#ff794f; }
+        .task-summary { color:#aaa7b0; font-size:13px; margin-bottom:18px; }
+        .day-picker { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 8px; }
+        .day-chip { display:flex; align-items:center; gap:7px; background:#141416; border:1px solid #38383e; border-radius:9px; padding:9px 12px; color:#e8e5e8; font-size:13px; cursor:pointer; }
+        .day-chip input { accent-color:#ff794f; width:15px; height:15px; margin:0; }
+        .task-days { color:#aaa7b0; font-size:12px; margin-top:5px; }
+        .task-content { flex:1; min-width:0; }
+        .day-badge { color:#ff9b7d; font-size:11px; margin-top:5px; }
+        .empty-state { border:1px dashed #38383e; border-radius:10px; padding:35px 20px; color:#85838c; text-align:center; }
+        .weekly-card { background:#141416; border:1px solid #29292e; border-radius:12px; padding:20px; margin:20px 0 28px; }
+        .weekly-top { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .weekly-label { color:#aaa7b0; font-size:12px; letter-spacing:1.5px; }
+        .weekly-percent { font-size:34px; font-weight:800; color:#ff794f; margin:6px 0; }
+        .progress-track { height:9px; background:#303035; border-radius:20px; overflow:hidden; margin:15px 0 8px; }
+        .progress-fill { height:100%; width:0; background:#ff794f; border-radius:20px; transition:width .2s; }
+        .history-list { display:grid; gap:12px; margin-top:18px; }
+        .history-row { display:grid; grid-template-columns:minmax(115px,1fr) 2fr 48px; gap:12px; align-items:center; color:#d8d5d9; font-size:13px; }
+        .history-row .progress-track { margin:0; height:7px; }
+        .muted-note { color:#85838c; font-size:12px; line-height:1.5; }
+        .history-toggle { padding:10px 14px; background:#242428; color:#f3f0ed; border:1px solid #38383e; margin-top:14px; }
+        @media(max-width:500px) { .task-form { flex-direction:column; } .task-form button { padding:14px; } .history-row { grid-template-columns:1fr 48px; } .history-row .progress-track { grid-column:1 / -1; grid-row:2; } }
+    </style>
+</head>
+<body data-aura-page="tasks">
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">AURA<span>.</span></div>
+            <p class="sidebar-label">РАБОЧЕЕ ПРОСТРАНСТВО</p>
+            <nav>
+                <a class="nav-link" href="../auth.html">🔐 Аккаунт</a>
+                <a class="nav-link" href="../index.html">🏠 Главная</a>
+                <a class="nav-link" href="projects.html">📁 Проекты</a>
+                <a class="nav-link active" href="tasks.html">✅ Задачи</a>
+                <a class="nav-link" href="finance.html">💰 Финансы</a>
+                <a class="nav-link" href="dead-book.html">📓 Мёртвая книга</a><a class="nav-link" href="day-tracker.html">📈 Трекер дня</a><a class="nav-link" href="calendar.html">📅 Календарь жизни</a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="avatar">A</div>
+                <div><strong>Моё пространство</strong><small>Личная система</small></div>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div><span class="eyebrow page-identity">03 / ЗАДАЧИ И ПЛАНЫ</span><h1>Мои задачи</h1></div>
+                <div class="status"><span></span> Личный план</div>
+            </header>
+
+            <section class="welcome">
+                <div>
+                    <span class="eyebrow">ОДИН ШАГ ЗА ДРУГИМ</span>
+                    <h2>Превращай планы<br>в <span>результаты.</span></h2>
+                    <p>Отмечай выполнение каждый день и следи за своим прогрессом по неделям.</p>
+                </div>
+                <div class="welcome-mark">DO<span>YOUR BEST</span></div>
+            </section>
+
+            <section class="section">
+                <div class="section-heading">
+                    <div><span class="eyebrow">ТВОЙ ПРОГРЕСС</span><h2>Результат недели</h2></div>
+                </div>
+                <div class="weekly-card">
+                    <div class="weekly-top">
+                        <div><div class="weekly-label" id="week-label">ТЕКУЩАЯ НЕДЕЛЯ</div><div class="weekly-percent" id="week-percent">0%</div></div>
+                        <div><strong id="week-count">0 из 0 отметок</strong><p class="muted-note" id="week-caption">Выполнение с понедельника по сегодня</p></div>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill" id="week-progress"></div></div>
+                    <p class="muted-note">Каждая ежедневная задача считается отдельной отметкой за каждый день. В начале новой недели задачи остаются, а статистика прошлых недель сохраняется.</p>
+                    <button type="button" class="history-toggle" id="history-toggle">Показать историю недель</button>
+                    <div id="history-panel" hidden>
+                        <div class="history-list" id="history-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-heading">
+                    <div><span class="eyebrow">ТВОЙ СПИСОК</span><h2>Что нужно сделать?</h2></div>
+                </div>
+                <form class="task-form" id="task-form">
+                    <input id="task-input" type="text" placeholder="Например: читать 30 минут..." maxlength="200" autocomplete="off" required>
+                    <button type="submit">+ Добавить</button>
+                </form>
+                <p class="task-summary">В какие дни повторять задачу?</p>
+                <div class="day-picker" id="day-picker">
+                    <label class="day-chip"><input type="checkbox" value="1" checked> Пн</label>
+                    <label class="day-chip"><input type="checkbox" value="2" checked> Вт</label>
+                    <label class="day-chip"><input type="checkbox" value="3" checked> Ср</label>
+                    <label class="day-chip"><input type="checkbox" value="4" checked> Чт</label>
+                    <label class="day-chip"><input type="checkbox" value="5" checked> Пт</label>
+                    <label class="day-chip"><input type="checkbox" value="6" checked> Сб</label>
+                    <label class="day-chip"><input type="checkbox" value="0" checked> Вс</label>
+                </div>
+                <p class="muted-note">Выбери дни недели для новой задачи. Например, только понедельник и среда.</p>
+                <p class="task-summary" id="task-summary">Загрузка задач...</p>
+                <div class="task-list" id="task-list"></div>
+            </section>
+
+            <footer>AURA OS <span>·</span> МАЛЕНЬКИЕ ШАГИ — БОЛЬШИЕ ПЕРЕМЕНЫ.</footer>
+        </main>
+    </div>
+
+    <script src="../js/store.js"></script>
+    <script>
+    (() => {
+        "use strict";
+
+        const STORAGE_KEY = "aura-os-tasks";
+        const form = document.getElementById("task-form");
+        const input = document.getElementById("task-input");
+        const list = document.getElementById("task-list");
+        const summary = document.getElementById("task-summary");
+        const weekPercent = document.getElementById("week-percent");
+        const weekCount = document.getElementById("week-count");
+        const weekCaption = document.getElementById("week-caption");
+        const weekProgress = document.getElementById("week-progress");
+        const historyToggle = document.getElementById("history-toggle");
+        const historyPanel = document.getElementById("history-panel");
+        const historyList = document.getElementById("history-list");
+        const dayPicker = document.getElementById("day-picker");
+
+        const dayNames = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+
+        const todayKey = dateKey(new Date());
+        let tasks = loadTasks();
+
+        function dateKey(date) {
+            return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+        }
+        function startOfWeek(date) {
+            const d = new Date(date);
+            d.setHours(12,0,0,0);
+            d.setDate(d.getDate() - ((d.getDay()+6)%7));
+            return d;
+        }
+        function shiftDate(date, days) {
+            const d = new Date(date);
+            d.setDate(d.getDate()+days);
+            return d;
+        }
+        function loadTasks() {
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+                return Array.isArray(data) ? data.map((task, index) => ({
+                    id: String(task.id ?? `old-${index}-${Date.now()}`),
+                    text: String(task.text ?? "Задача"),
+                    active: task.active !== false,
+                    days: Array.isArray(task.days) ? task.days : [0,1,2,3,4,5,6],
+                    // done оставляем для совместимости со старой версией, но ежедневные отметки храним отдельно.
+                    done: Boolean(task.done)
+                })) : [];
+            } catch (error) {
+                console.error("Не удалось загрузить задачи", error);
+                return [];
+            }
+        }
+        function saveTasks() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+            if (window.AuraStore && typeof AuraStore.saveTasks === "function") {
+                AuraStore.saveTasks(tasks);
+            }
+        }
+        function readHistory() {
+            try {
+                const data = JSON.parse(localStorage.getItem("aura-os-daily-history-v1") || "{}");
+                return data && typeof data === "object" && !Array.isArray(data) ? data : {};
+            } catch {
+                return {};
+            }
+        }
+        function saveHistory(history) {
+            localStorage.setItem("aura-os-daily-history-v1", JSON.stringify(history));
+        }
+        function isDone(taskId, date) {
+            const history = readHistory();
+            return Boolean(history[date] && history[date][String(taskId)]);
+        }
+        function setDone(taskId, date, done) {
+            const history = readHistory();
+            if (!history[date]) history[date] = {};
+            if (done) history[date][String(taskId)] = true;
+            else delete history[date][String(taskId)];
+            if (!Object.keys(history[date]).length) delete history[date];
+            saveHistory(history);
+        }
+        function percent(completed, total) {
+            return total ? Math.round(completed / total * 100) : 0;
+        }
+        function renderStats() {
+            const history = readHistory();
+            const monday = startOfWeek(new Date());
+            const elapsedDays = ((new Date().getDay()+6)%7)+1;
+            const activeTasks = tasks.filter(task => task.active !== false);
+            let completed = 0;
+            let total = 0;
+
+            for (let i = 0; i < elapsedDays; i++) {
+                const dayDate = shiftDate(monday, i);
+                const key = dateKey(dayDate);
+                const weekday = dayDate.getDay();
+                for (const task of activeTasks) {
+                    if (!task.days.includes(weekday)) continue;
+                    total++;
+                    if (history[key] && history[key][String(task.id)]) completed++;
+                }
+            }
+            const currentPercent = percent(completed, total);
+            weekPercent.textContent = `${currentPercent}%`;
+            weekCount.textContent = `${completed} из ${total} отметок`;
+            weekCaption.textContent = total
+                ? `С понедельника по ${new Date().toLocaleDateString("ru-RU", { day:"numeric", month:"long" })}`
+                : "Добавь ежедневные задачи, чтобы начать отсчёт";
+            weekProgress.style.width = `${currentPercent}%`;
+
+            const weeks = [];
+            for (let offset = 7; offset >= 0; offset--) {
+                const weekStart = shiftDate(monday, -offset * 7);
+                const isCurrent = offset === 0;
+                const daysToCount = isCurrent ? elapsedDays : 7;
+                let weekDone = 0;
+                let weekTotal = 0;
+
+                for (let i = 0; i < daysToCount; i++) {
+                    const dayDate = shiftDate(weekStart, i);
+                    const key = dateKey(dayDate);
+                    const weekday = dayDate.getDay();
+                    for (const task of activeTasks) {
+                        if (!task.days.includes(weekday)) continue;
+                        weekTotal++;
+                        if (history[key] && history[key][String(task.id)]) weekDone++;
+                    }
+                }
+                weeks.push({
+                    label: isCurrent ? "Эта неделя" : `${dateKey(weekStart)} – ${dateKey(shiftDate(weekStart, 6))}`,
+                    done: weekDone,
+                    total: weekTotal,
+                    percent: percent(weekDone, weekTotal)
+                });
+            }
+
+            historyList.replaceChildren();
+            weeks.reverse().forEach(week => {
+                const row = document.createElement("div");
+                row.className = "history-row";
+                const label = document.createElement("span");
+                label.textContent = week.label;
+                const track = document.createElement("div");
+                track.className = "progress-track";
+                const fill = document.createElement("div");
+                fill.className = "progress-fill";
+                fill.style.width = `${week.percent}%`;
+                track.appendChild(fill);
+                const value = document.createElement("strong");
+                value.textContent = `${week.percent}%`;
+                value.title = `${week.done} из ${week.total} отметок`;
+                row.append(label, track, value);
+                historyList.appendChild(row);
+            });
+        }
+        function renderTasks() {
+            list.replaceChildren();
+            const activeTasks = tasks.filter(task => task.active !== false);
+            const todayTasks = activeTasks.filter(task => task.days.includes(new Date().getDay()));
+            const todayCompleted = todayTasks.filter(task => isDone(task.id, todayKey)).length;
+            summary.textContent = `Задач на сегодня: ${todayTasks.length} · Выполнено: ${todayCompleted} из ${todayTasks.length}`;
+
+            if (!activeTasks.length) {
+                const empty = document.createElement("div");
+                empty.className = "empty-state";
+                empty.textContent = "Здесь пока пусто. Добавь первую ежедневную задачу!";
+                list.appendChild(empty);
+                renderStats();
+                return;
+            }
+
+            activeTasks.forEach(task => {
+                // Скрываем задачу в те дни, на которые она не запланирована.
+                if (!task.days.includes(new Date().getDay())) return;
+                const done = isDone(task.id, todayKey);
+                const item = document.createElement("div");
+                item.className = "task-item" + (done ? " done" : "");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = done;
+                checkbox.setAttribute("aria-label", "Отметить выполнение за сегодня");
+                checkbox.addEventListener("change", () => {
+                    setDone(task.id, todayKey, checkbox.checked);
+                    renderTasks();
+                });
+
+                const content = document.createElement("div");
+                content.className = "task-content";
+                const name = document.createElement("div");
+                name.className = "task-name";
+                name.textContent = task.text;
+                const daysLabel = document.createElement("div");
+                daysLabel.className = "day-badge";
+                daysLabel.textContent = "Дни: " + task.days.slice().sort((a,b) => (a+6)%7 - (b+6)%7).map(day => dayNames[day]).join(", ");
+                content.append(name, daysLabel);
+
+                const remove = document.createElement("button");
+                remove.className = "delete-task";
+                remove.type = "button";
+                remove.textContent = "×";
+                remove.setAttribute("aria-label", "Удалить задачу");
+                remove.title = "Удалить задачу и исключить её из будущей статистики";
+                remove.addEventListener("click", () => {
+                    if (!confirm(`Удалить задачу «${task.text}»? История её прошлых отметок останется в сохранённых данных, но задача исчезнет из списка.`)) return;
+                    tasks = tasks.filter(entry => entry.id !== task.id);
+                    saveTasks();
+                    renderTasks();
+                });
+                item.append(checkbox, content, remove);
+                list.appendChild(item);
+            });
+            renderStats();
+        }
+
+        // При первом запуске старые задачи не теряются. Старое done не переносится на сегодня:
+        // старый формат не содержит даты выполнения, поэтому нельзя достоверно восстановить историю.
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+            const text = input.value.trim();
+            if (!text) return;
+            const selectedDays = [...dayPicker.querySelectorAll('input[type="checkbox"]:checked')]
+                .map(checkbox => Number(checkbox.value));
+            if (!selectedDays.length) {
+                alert("Выбери хотя бы один день недели.");
+                return;
+            }
+            tasks.push({
+                id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                text,
+                days: selectedDays,
+                active: true,
+                done: false
+            });
+            saveTasks();
+            renderTasks();
+            form.reset();
+            input.focus();
+        });
+
+        historyToggle.addEventListener("click", () => {
+            historyPanel.hidden = !historyPanel.hidden;
+            historyToggle.textContent = historyPanel.hidden ? "Показать историю недель" : "Скрыть историю недель";
+        });
+
+        renderTasks();
+    })();
+    </script>
+    <script src="../js/seasonal-theme.js"></script>
+</body>
+</html>

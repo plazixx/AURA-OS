@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA OS — Личный центр управления</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/seasonal-design.css">
+    <style>
+        .dashboard-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+        .dashboard-stat { background:#141416; border:1px solid #29292e; border-radius:12px; padding:20px; }
+        .dashboard-stat .stat-value { display:block; font-size:30px; font-weight:800; margin:10px 0 5px; color:#ff794f; }
+        .dashboard-stat p { margin:8px 0; }
+        .dashboard-stat small,.dashboard-muted { color:#96939c; font-size:12px; }
+        .dashboard-two { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:16px; }
+        .dashboard-panel { background:#141416; border:1px solid #29292e; border-radius:12px; padding:20px; min-width:0; }
+        .dashboard-panel h3 { margin-top:0; }
+        .dashboard-list { display:grid; gap:10px; }
+        .dashboard-task { display:flex; gap:10px; align-items:flex-start; padding:12px; border:1px solid #29292e; border-radius:9px; }
+        .dashboard-task input { accent-color:#ff794f; width:17px; height:17px; margin-top:2px; flex-shrink:0; }
+        .dashboard-task span { overflow-wrap:anywhere; }
+        .dashboard-task.is-done span { color:#85838c; text-decoration:line-through; }
+        .dashboard-project { border-bottom:1px solid #29292e; padding:12px 0; }
+        .dashboard-project:last-child { border-bottom:0; }
+        .dashboard-project-head { display:flex; gap:10px; justify-content:space-between; align-items:flex-start; }
+        .dashboard-project-name { font-weight:700; overflow-wrap:anywhere; }
+        .dashboard-project-status { color:#ff9b7d; font-size:12px; white-space:nowrap; }
+        .dashboard-progress { height:7px; border-radius:20px; background:#303035; overflow:hidden; margin:10px 0 5px; }
+        .dashboard-progress > div { height:100%; background:#ff794f; border-radius:20px; }
+        .dashboard-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+        .dashboard-actions a { display:inline-block; text-decoration:none; padding:10px 14px; border-radius:8px; border:1px solid #38383e; color:#f3f0ed; }
+        .dashboard-actions a:first-child { background:#ff794f; color:#17100e; border-color:#ff794f; font-weight:700; }
+        .dashboard-empty { color:#96939c; border:1px dashed #38383e; border-radius:9px; padding:18px; font-size:13px; }
+        @media(max-width:850px) { .dashboard-grid { grid-template-columns:1fr; } .dashboard-two { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body data-aura-page="home">
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">AURA<span>.</span></div>
+            <p class="sidebar-label">РАБОЧЕЕ ПРОСТРАНСТВО</p>
+            <nav>
+                <a class="nav-link" href="auth.html">🔐 Аккаунт</a>
+                <a class="nav-link active" href="index.html">🏠 Главная</a>
+                <a class="nav-link" href="pages/projects.html">📁 Проекты</a>
+                <a class="nav-link" href="pages/tasks.html">✅ Задачи</a>
+                <a class="nav-link" href="pages/finance.html">💰 Финансы</a>
+                <a class="nav-link" href="pages/dead-book.html">📓 Мёртвая книга</a><a class="nav-link" href="pages/day-tracker.html">📈 Трекер дня</a>
+                <a class="nav-link" href="pages/calendar.html">📅 Календарь жизни</a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="avatar">A</div>
+                <div><strong>Моё пространство</strong><small>Личная система</small></div>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div><span class="eyebrow page-identity">01 / ТВОЙ ЛИЧНЫЙ ЦЕНТР</span><h1>Главная панель</h1></div>
+                <div class="status"><span></span> Система готова</div>
+            </header>
+
+            <section class="welcome">
+                <div>
+                    <span class="eyebrow">ТВОЁ ПРОСТРАНСТВО · ТВОИ ПРАВИЛА</span>
+                    <h2>Создавай свою<br><span>реальность.</span></h2>
+                    <p>Все идеи, задачи и большие цели — в одном месте.</p>
+                    <a class="primary-button" href="pages/tasks.html">Перейти к задачам ↗</a>
+                </div>
+                <div class="welcome-mark">A<span>URA</span></div>
+            </section>
+
+            <section class="section">
+                <div class="section-heading">
+                    <div><span class="eyebrow">ТВОЯ АКТИВНОСТЬ</span><h2>Обзор пространства</h2></div>
+                    <span class="muted">01 / DASHBOARD</span>
+                </div>
+                <div class="dashboard-grid">
+                    <article class="dashboard-stat">
+                        <span class="stat-icon">▣</span><p>Активные проекты</p>
+                        <strong class="stat-value" id="active-project-count">0</strong>
+                        <small>Проекты, которые ещё не завершены</small>
+                    </article>
+                    <article class="dashboard-stat">
+                        <span class="stat-icon">☷</span><p>Задачи на сегодня</p>
+                        <strong class="stat-value" id="today-task-count">0</strong>
+                        <small id="today-task-caption">Выполнено 0 из 0</small>
+                    </article>
+                    <article class="dashboard-stat">
+                        <span class="stat-icon">◷</span><p>Прогресс недели</p>
+                        <strong class="stat-value" id="week-percent">0%</strong>
+                        <small id="week-caption">0 из 0 запланированных отметок</small>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="dashboard-two">
+                    <article class="dashboard-panel">
+                        <span class="eyebrow">НА СЕГОДНЯ</span>
+                        <h3>Мои задачи</h3>
+                        <p class="dashboard-muted">Отмечай выполнение прямо здесь — данные сохранятся и на странице задач.</p>
+                        <div class="dashboard-list" id="today-task-list"></div>
+                        <div class="dashboard-actions"><a href="pages/tasks.html">Все задачи ↗</a></div>
+                    </article>
+                    <article class="dashboard-panel">
+                        <span class="eyebrow">В ДВИЖЕНИИ</span>
+                        <h3>Мои проекты</h3>
+                        <p class="dashboard-muted">Прогресс считается по выполненным подпунктам.</p>
+                        <div id="project-list" class="dashboard-list"></div>
+                        <div class="dashboard-actions"><a href="pages/projects.html">Все проекты ↗</a></div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section bottom-grid">
+                <article class="panel">
+                    <span class="eyebrow">ФОКУС</span>
+                    <h3>Главное — двигаться вперёд.</h3>
+                    <p>Не нужно делать всё сразу. Выбери направление и начни с одного шага.</p>
+                </article>
+                <article class="panel accent-panel">
+                    <span class="eyebrow">СЛЕДУЮЩИЙ ШАГ</span>
+                    <h3>Собери свою систему</h3>
+                    <p>Добавь проект, разбей его на этапы и отмечай ежедневные задачи.</p>
+                    <a href="pages/projects.html">Открыть проекты →</a>
+                </article>
+            </section>
+            <footer>AURA OS <span>·</span> ТВОЯ СИСТЕМА. ТВОИ ПРАВИЛА.</footer>
+        </main>
+    </div>
+
+    <script src="js/store.js"></script>
+    <script>
+    (() => {
+        "use strict";
+        const TASKS_KEY = "aura-os-tasks";
+        const PROJECTS_KEY = "aura-os-projects-v1";
+        const HISTORY_KEY = "aura-os-daily-history-v1";
+        const $ = id => document.getElementById(id);
+
+        function read(key, fallback) {
+            try {
+                const value = JSON.parse(localStorage.getItem(key) || "null");
+                return value === null ? fallback : value;
+            } catch { return fallback; }
+        }
+        function dateKey(date) {
+            return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+        }
+        function shiftDate(date, days) {
+            const result = new Date(date);
+            result.setDate(result.getDate()+days);
+            return result;
+        }
+        function mondayOf(date) {
+            const result = new Date(date);
+            result.setHours(12,0,0,0);
+            result.setDate(result.getDate()-((result.getDay()+6)%7));
+            return result;
+        }
+        function safeText(value) { return String(value ?? ""); }
+        function render() {
+            const tasks = read(TASKS_KEY, []);
+            const projects = read(PROJECTS_KEY, []);
+            const history = read(HISTORY_KEY, {});
+            const taskArray = Array.isArray(tasks) ? tasks : [];
+            const projectArray = Array.isArray(projects) ? projects : [];
+            const today = new Date();
+            const todayKey = dateKey(today);
+            const weekday = today.getDay();
+            const activeTasks = taskArray.filter(task => task.active !== false && Array.isArray(task.days) && task.days.includes(weekday));
+            const legacyTasks = taskArray.filter(task => task.active !== false && !Array.isArray(task.days));
+            const todayTasks = activeTasks.concat(legacyTasks);
+            const completedToday = todayTasks.filter(task => history[todayKey] && history[todayKey][String(task.id)]).length;
+
+            $("active-project-count").textContent = projectArray.filter(project => project.status !== "Завершён").length;
+            $("today-task-count").textContent = todayTasks.length;
+            $("today-task-caption").textContent = `Выполнено ${completedToday} из ${todayTasks.length}`;
+
+            const monday = mondayOf(today);
+            const daysElapsed = ((today.getDay()+6)%7)+1;
+            let weekDone = 0, weekTotal = 0;
+            for (let i=0; i<daysElapsed; i++) {
+                const date = shiftDate(monday, i);
+                const key = dateKey(date);
+                const day = date.getDay();
+                for (const task of taskArray.filter(t => t.active !== false)) {
+                    const scheduledDays = Array.isArray(task.days) ? task.days : [0,1,2,3,4,5,6];
+                    if (!scheduledDays.includes(day)) continue;
+                    weekTotal++;
+                    if (history[key] && history[key][String(task.id)]) weekDone++;
+                }
+            }
+            $("week-percent").textContent = `${weekTotal ? Math.round(weekDone/weekTotal*100) : 0}%`;
+            $("week-caption").textContent = `${weekDone} из ${weekTotal} запланированных отметок`;
+
+            const taskList = $("today-task-list");
+            taskList.replaceChildren();
+            if (!todayTasks.length) {
+                const empty = document.createElement("div");
+                empty.className = "dashboard-empty";
+                empty.textContent = "На сегодня задач нет. Добавь задачу на странице задач.";
+                taskList.appendChild(empty);
+            } else {
+                todayTasks.forEach(task => {
+                    const isDone = Boolean(history[todayKey] && history[todayKey][String(task.id)]);
+                    const label = document.createElement("label");
+                    label.className = "dashboard-task" + (isDone ? " is-done" : "");
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.checked = isDone;
+                    checkbox.addEventListener("change", () => {
+                        const latest = read(HISTORY_KEY, {});
+                        if (!latest[todayKey]) latest[todayKey] = {};
+                        if (checkbox.checked) latest[todayKey][String(task.id)] = true;
+                        else delete latest[todayKey][String(task.id)];
+                        if (!Object.keys(latest[todayKey]).length) delete latest[todayKey];
+                        localStorage.setItem(HISTORY_KEY, JSON.stringify(latest));
+                        render();
+                    });
+                    const text = document.createElement("span");
+                    text.textContent = safeText(task.text);
+                    label.append(checkbox, text);
+                    taskList.appendChild(label);
+                });
+            }
+
+            const projectList = $("project-list");
+            projectList.replaceChildren();
+            const activeProjects = projectArray.filter(project => project.status !== "Завершён").slice(0,5);
+            if (!activeProjects.length) {
+                const empty = document.createElement("div");
+                empty.className = "dashboard-empty";
+                empty.textContent = "Пока нет активных проектов. Создай первый проект!";
+                projectList.appendChild(empty);
+            } else {
+                activeProjects.forEach(project => {
+                    const subtasks = Array.isArray(project.subtasks) ? project.subtasks : [];
+                    const done = subtasks.filter(task => task.done).length;
+                    const percent = subtasks.length ? Math.round(done/subtasks.length*100) : 0;
+                    const item = document.createElement("div");
+                    item.className = "dashboard-project";
+                    const head = document.createElement("div");
+                    head.className = "dashboard-project-head";
+                    const name = document.createElement("span");
+                    name.className = "dashboard-project-name";
+                    name.textContent = safeText(project.name || "Без названия");
+                    const status = document.createElement("span");
+                    status.className = "dashboard-project-status";
+                    status.textContent = safeText(project.status || "Не начат");
+                    head.append(name,status);
+                    const track = document.createElement("div");
+                    track.className = "dashboard-progress";
+                    const fill = document.createElement("div");
+                    fill.style.width = `${percent}%`;
+                    track.appendChild(fill);
+                    const note = document.createElement("small");
+                    note.className = "dashboard-muted";
+                    note.textContent = `${percent}% · ${done} из ${subtasks.length} подпунктов`;
+                    item.append(head,track,note);
+                    projectList.appendChild(item);
+                });
+            }
+        }
+        render();
+    })();
+    </script>
+    <script src="js/seasonal-theme.js"></script>
+</body>
+</html>
