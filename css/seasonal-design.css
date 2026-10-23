@@ -1,0 +1,507 @@
+/*
+ * AURA OS — Global Seasonal Design System
+ * Load this stylesheet AFTER main.css and seasonal-theme.js on every page.
+ * All shared UI components inherit seasonal tokens automatically.
+ */
+:root {
+  color-scheme: dark;
+  --aura-bg: #0a0a0c;
+  --aura-surface: #131316;
+  --aura-surface-2: #19191d;
+  --aura-surface-3: #202025;
+  --aura-text: #f5f2f0;
+  --aura-muted: #a6a2aa;
+  --aura-line: #2b2a30;
+  --aura-accent: #ff784f;
+  --aura-accent-hover: #ff9676;
+  --aura-accent-contrast: #1b100c;
+  --aura-accent-soft: rgba(255,120,79,.13);
+  --aura-accent-border: rgba(255,120,79,.34);
+  --aura-glow: rgba(255,120,79,.15);
+  --aura-shadow: 0 16px 44px rgba(0,0,0,.24);
+  --aura-radius-sm: 9px;
+  --aura-radius: 14px;
+  --aura-radius-lg: 20px;
+  --aura-season-bg-image: radial-gradient(ellipse at 85% 0%, rgba(120,55,24,.16), transparent 42%);
+  --aura-season-decoration: "🍂  ✦  🎃";
+  --aura-transition: 220ms ease;
+}
+
+/* Seasonal variables are selected by data-aura-season on <html>. */
+:root[data-aura-season="autumn"] {
+  --aura-bg: #100c0b;
+  --aura-surface: #191311;
+  --aura-surface-2: #211815;
+  --aura-surface-3: #2b1e19;
+  --aura-text: #fff3e8;
+  --aura-muted: #c0a99b;
+  --aura-line: #463026;
+  --aura-accent: #ff784f;
+  --aura-accent-hover: #ffa078;
+  --aura-accent-contrast: #261109;
+  --aura-accent-soft: rgba(255,120,79,.14);
+  --aura-accent-border: rgba(255,120,79,.34);
+  --aura-glow: rgba(255,120,79,.18);
+  --aura-season-bg-image: radial-gradient(ellipse at 85% 0%, rgba(144,61,22,.23), transparent 42%), radial-gradient(ellipse at 0% 90%, rgba(89,35,18,.12), transparent 35%);
+  --aura-season-decoration: "🍂  🎃  🍁";
+}
+
+:root[data-aura-season="winter"] {
+  --aura-bg: #080d16;
+  --aura-surface: #101927;
+  --aura-surface-2: #152235;
+  --aura-surface-3: #1d2d43;
+  --aura-text: #f0f6ff;
+  --aura-muted: #a6b7cc;
+  --aura-line: #2a3c53;
+  --aura-accent: #91caff;
+  --aura-accent-hover: #b9ddff;
+  --aura-accent-contrast: #0c1b2b;
+  --aura-accent-soft: rgba(145,202,255,.14);
+  --aura-accent-border: rgba(145,202,255,.34);
+  --aura-glow: rgba(108,177,255,.18);
+  --aura-season-bg-image: radial-gradient(ellipse at 85% 0%, rgba(48,91,151,.24), transparent 43%), radial-gradient(ellipse at 5% 90%, rgba(72,111,158,.12), transparent 35%);
+  --aura-season-decoration: "❄  ✦  ❅";
+}
+
+:root[data-aura-season="spring"] {
+  --aura-bg: #09110d;
+  --aura-surface: #111b15;
+  --aura-surface-2: #17251b;
+  --aura-surface-3: #203326;
+  --aura-text: #f0fff3;
+  --aura-muted: #a7c2ae;
+  --aura-line: #2d4835;
+  --aura-accent: #8bdfa2;
+  --aura-accent-hover: #b0f0bf;
+  --aura-accent-contrast: #102217;
+  --aura-accent-soft: rgba(139,223,162,.14);
+  --aura-accent-border: rgba(139,223,162,.32);
+  --aura-glow: rgba(94,209,129,.16);
+  --aura-season-bg-image: radial-gradient(ellipse at 85% 0%, rgba(43,112,64,.23), transparent 43%), radial-gradient(ellipse at 0% 90%, rgba(73,119,56,.12), transparent 35%);
+  --aura-season-decoration: "🌿  ✿  ❋";
+}
+
+:root[data-aura-season="summer"] {
+  --aura-bg: #071113;
+  --aura-surface: #0e1a1c;
+  --aura-surface-2: #142426;
+  --aura-surface-3: #1b3234;
+  --aura-text: #efffff;
+  --aura-muted: #a2c5c7;
+  --aura-line: #29474a;
+  --aura-accent: #55ded5;
+  --aura-accent-hover: #8af0e8;
+  --aura-accent-contrast: #082321;
+  --aura-accent-soft: rgba(85,222,213,.14);
+  --aura-accent-border: rgba(85,222,213,.33);
+  --aura-glow: rgba(85,222,213,.17);
+  --aura-season-bg-image: radial-gradient(ellipse at 85% 0%, rgba(16,130,143,.24), transparent 43%), radial-gradient(ellipse at 0% 90%, rgba(190,151,65,.10), transparent 35%);
+  --aura-season-decoration: "☀  ≈  ✦";
+}
+
+/* Foundation: makes the whole page use the current season's palette. */
+html, body {
+  background-color: var(--aura-bg);
+  color: var(--aura-text);
+}
+body {
+  background-image: var(--aura-season-bg-image);
+  background-attachment: fixed;
+  transition: background-color var(--aura-transition), color var(--aura-transition);
+}
+::selection { background: var(--aura-accent); color: var(--aura-accent-contrast); }
+
+/* Broad coverage of common layouts across existing and future pages. */
+header, nav, aside, footer, main, section, article,
+.sidebar, .main-content, .content, .page-content, .dashboard,
+.topbar, .navbar, .header, .footer {
+  transition: border-color var(--aura-transition), background-color var(--aura-transition), color var(--aura-transition);
+}
+.sidebar, aside, .navbar, nav[aria-label] {
+  border-color: var(--aura-line);
+}
+.card, .project-card, .task-item, .stat-card, .dashboard-card,
+.panel, .modal, .dialog, .dropdown-menu, .popover, .widget,
+.task, .project, .list-item, .calendar-day, .calendar-cell {
+  background-color: var(--aura-surface);
+  border-color: var(--aura-line);
+  color: var(--aura-text);
+  transition: background-color var(--aura-transition), border-color var(--aura-transition),
+              box-shadow var(--aura-transition), color var(--aura-transition), transform var(--aura-transition);
+}
+.card:hover, .project-card:hover, .dashboard-card:hover, .widget:hover {
+  border-color: var(--aura-accent-border);
+  box-shadow: 0 8px 28px var(--aura-glow);
+}
+h1, h2, h3, h4, h5, h6, p, label, small, strong, em, li {
+  color: inherit;
+}
+.muted, .subtitle, .description, .hint, .help-text, .text-muted,
+.task-summary, .project-description {
+  color: var(--aura-muted);
+}
+
+/* Buttons: all ordinary and future buttons inherit the theme. */
+button, input[type="button"], input[type="submit"], input[type="reset"],
+.btn, .button, [role="button"], a.button, a.btn {
+  font: inherit;
+  border-radius: var(--aura-radius-sm);
+  transition: background-color var(--aura-transition), border-color var(--aura-transition),
+              color var(--aura-transition), box-shadow var(--aura-transition), transform var(--aura-transition);
+}
+button:not(:disabled), input[type="button"]:not(:disabled),
+input[type="submit"]:not(:disabled), .btn, .button, [role="button"] {
+  cursor: pointer;
+}
+button:focus-visible, a:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--aura-accent);
+  outline-offset: 3px;
+}
+button:hover:not(:disabled), input[type="button"]:hover:not(:disabled),
+input[type="submit"]:hover:not(:disabled), .btn:hover, .button:hover {
+  border-color: var(--aura-accent) !important;
+  box-shadow: 0 0 0 3px var(--aura-accent-soft);
+}
+button:active:not(:disabled), .btn:active, .button:active {
+  transform: translateY(1px);
+}
+button:disabled, input:disabled, select:disabled, textarea:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* Explicit primary styles; common existing orange buttons are included. */
+button[type="submit"], input[type="submit"], .primary-button, .btn-primary,
+.button-primary, .task-form button, #task-form button,
+button.add-btn, .add-button, .new-project-button, .btn-accent,
+a.primary-button, a.btn-primary {
+  background: var(--aura-accent) !important;
+  border-color: var(--aura-accent) !important;
+  color: var(--aura-accent-contrast) !important;
+}
+button[type="submit"]:hover, input[type="submit"]:hover,
+.primary-button:hover, .btn-primary:hover, .button-primary:hover,
+.task-form button:hover, #task-form button:hover {
+  background: var(--aura-accent-hover) !important;
+  border-color: var(--aura-accent-hover) !important;
+}
+button:not([type="submit"]), .btn-secondary, .button-secondary,
+.secondary-button, .filter-button, .tab-button {
+  border-color: var(--aura-line);
+}
+button.danger, .danger-button, .delete-button, .btn-danger {
+  color: #ff8b83;
+  border-color: rgba(255,100,100,.35);
+  background: rgba(255,80,80,.07);
+}
+
+/* Links, navigation, active tabs, chips, badges and status indicators. */
+a { color: var(--aura-accent); text-decoration-color: transparent; }
+a:hover { text-decoration-color: currentColor; }
+.sidebar a, aside a, nav a, .nav-link, .tab, .menu-item {
+  transition: color var(--aura-transition), background-color var(--aura-transition), border-color var(--aura-transition);
+}
+.nav-link.active, .sidebar a.active, nav a.active, .tab.active,
+[aria-current="page"] {
+  color: var(--aura-accent) !important;
+  border-color: var(--aura-accent-border);
+  background-color: var(--aura-accent-soft);
+}
+.badge, .chip, .tag, .status-badge, .priority-badge, .pill {
+  border-color: var(--aura-accent-border);
+}
+.badge-accent, .chip-active, .tag-active, .status-active {
+  color: var(--aura-accent);
+  background: var(--aura-accent-soft);
+}
+
+/* Forms, search, selects and date controls. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea, select {
+  background-color: var(--aura-surface);
+  color: var(--aura-text);
+  border-color: var(--aura-line);
+  border-radius: var(--aura-radius-sm);
+  transition: border-color var(--aura-transition), box-shadow var(--aura-transition), background-color var(--aura-transition);
+}
+input::placeholder, textarea::placeholder { color: var(--aura-muted); opacity: .8; }
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--aura-accent) !important;
+  box-shadow: 0 0 0 3px var(--aura-accent-soft) !important;
+}
+input[type="checkbox"], input[type="radio"], input[type="range"], progress {
+  accent-color: var(--aura-accent);
+}
+
+/* Progress, charts, counters and separators. */
+.progress, .progress-track, .progress-bar-bg, .progress-background {
+  background-color: var(--aura-surface-3);
+}
+.progress-bar, .progress-fill, .progress-track > span, .progress > span,
+progress::-webkit-progress-value {
+  background: var(--aura-accent);
+}
+hr, .divider, .separator { border-color: var(--aura-line); }
+.stat-value, .percentage, .progress-percent, .accent, .text-accent {
+  color: var(--aura-accent);
+}
+
+/* Checkboxes and completed tasks. */
+input[type="checkbox"] { accent-color: var(--aura-accent); }
+.task-item.completed, .task.done, .completed-task {
+  border-color: var(--aura-accent-border);
+}
+.task-item.completed .task-name, .task.done .task-name {
+  color: var(--aura-muted);
+}
+
+/* Scrollbars match the active season. */
+* {
+  scrollbar-color: var(--aura-line) var(--aura-bg);
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--aura-bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--aura-line);
+  border: 2px solid var(--aura-bg);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--aura-accent); }
+
+/* Reusable theme label, added by seasonal-theme.js. */
+.seasonal-theme-chip {
+  border-color: var(--aura-accent-border) !important;
+  background: var(--aura-accent-soft) !important;
+  color: var(--aura-accent) !important;
+}
+.seasonal-decor { color: var(--aura-accent) !important; }
+
+/* Respect accessibility preferences and small screens. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* Mini calendar showing the countdown to all four seasonal changes. */
+.aura-season-countdown {
+  width: min(100%, 980px);
+  box-sizing: border-box;
+  margin: 0 0 18px;
+  padding: 15px;
+  border: 1px solid var(--aura-accent-border);
+  border-radius: var(--aura-radius-lg);
+  background:
+    linear-gradient(135deg, var(--aura-accent-soft), transparent 70%),
+    var(--aura-surface);
+  color: var(--aura-text);
+  box-shadow: 0 10px 32px rgba(0,0,0,.12);
+}
+.aura-season-countdown-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.aura-season-countdown-title {
+  color: var(--aura-text);
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: .02em;
+}
+.aura-season-countdown-current {
+  padding: 5px 9px;
+  border: 1px solid var(--aura-accent-border);
+  border-radius: 999px;
+  background: var(--aura-accent-soft);
+  color: var(--aura-accent);
+  font-size: 11px;
+}
+.aura-season-countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+.aura-season-countdown-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 3px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--aura-line);
+  border-radius: var(--aura-radius);
+  background: var(--aura-surface-2);
+}
+.aura-season-countdown-item.is-next {
+  border-color: var(--aura-accent);
+  box-shadow: inset 0 0 0 1px var(--aura-accent-border), 0 0 18px var(--aura-glow);
+}
+.aura-season-countdown-emoji {
+  grid-row: span 2;
+  font-size: 23px;
+}
+.aura-season-countdown-label {
+  overflow: hidden;
+  color: var(--aura-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.aura-season-countdown-item strong {
+  color: var(--aura-text);
+  font-size: clamp(15px, 2vw, 21px);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.aura-season-countdown-item strong small {
+  color: var(--aura-muted);
+  font-size: 10px;
+  font-weight: 500;
+}
+@media (max-width: 620px) {
+  .aura-season-countdown { padding: 11px; }
+  .aura-season-countdown-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+
+/* === AURA OS: richer seasonal atmosphere === */
+body { position: relative; isolation: isolate; }
+body::before, body::after { content:""; position:fixed; pointer-events:none; z-index:0; opacity:.22; }
+body::before { width:240px; height:240px; top:12%; right:-55px; border-radius:50%; background:var(--aura-season-orb,radial-gradient(circle,#ff784f33,transparent 68%)); filter:blur(5px); }
+body::after { width:190px; height:190px; bottom:5%; left:-70px; border-radius:50%; background:var(--aura-season-orb,radial-gradient(circle,#ff784f22,transparent 68%)); filter:blur(8px); }
+:root[data-aura-season="autumn"] { --aura-season-orb:radial-gradient(circle,#e36b2f55 0%,#8f3b2540 28%,transparent 72%); }
+:root[data-aura-season="winter"] { --aura-season-orb:radial-gradient(circle,#8ccaff55 0%,#d8edff28 30%,transparent 72%); }
+:root[data-aura-season="spring"] { --aura-season-orb:radial-gradient(circle,#80d99b55 0%,#f4a8c828 30%,transparent 72%); }
+:root[data-aura-season="summer"] { --aura-season-orb:radial-gradient(circle,#ffd45a55 0%,#37d7d028 30%,transparent 72%); }
+.app, .main, main, .sidebar, .content, .dashboard { position:relative; z-index:1; }
+.seasonal-decor { position:fixed; inset:0; z-index:5; pointer-events:none; overflow:hidden; font-size:22px; }
+.seasonal-float { position:absolute; top:-45px; left:var(--left); opacity:var(--opacity,.6); font-size:var(--size,22px); animation:aura-season-fall var(--duration,18s) linear var(--delay,0s) infinite; filter:drop-shadow(0 3px 5px #0002); }
+@keyframes aura-season-fall { 0%{transform:translate3d(0,-5vh,0) rotate(0deg)} 50%{transform:translate3d(var(--drift,25px),52vh,0) rotate(180deg)} 100%{transform:translate3d(calc(var(--drift,25px) * -1),110vh,0) rotate(360deg)} }
+.seasonal-decor-static { position:fixed; right:18px; bottom:28px; z-index:4; pointer-events:none; opacity:.7; font-size:25px; letter-spacing:7px; filter:drop-shadow(0 2px 8px var(--aura-glow)); }
+.aura-season-countdown, .seasonal-theme-chip { position:relative; z-index:2; }
+.aura-season-countdown { backdrop-filter:blur(12px); box-shadow:var(--aura-shadow); }
+.aura-season-countdown-item { transition:transform var(--aura-transition), border-color var(--aura-transition), background var(--aura-transition); }
+.aura-season-countdown-item:hover { transform:translateY(-3px); }
+:root[data-aura-season="autumn"] .welcome::after, :root[data-aura-season="autumn"] .hero::after { content:"🎃  🍂  🍁"; position:absolute; right:18px; bottom:12px; font-size:24px; letter-spacing:5px; opacity:.8; pointer-events:none; }
+:root[data-aura-season="winter"] .welcome::after, :root[data-aura-season="winter"] .hero::after { content:"❄️  🎄  ✨"; position:absolute; right:18px; bottom:12px; font-size:24px; letter-spacing:5px; opacity:.85; pointer-events:none; }
+:root[data-aura-season="spring"] .welcome::after, :root[data-aura-season="spring"] .hero::after { content:"🌷  🌿  🦋"; position:absolute; right:18px; bottom:12px; font-size:24px; letter-spacing:5px; opacity:.85; pointer-events:none; }
+:root[data-aura-season="summer"] .welcome::after, :root[data-aura-season="summer"] .hero::after { content:"🌴  🐚  ☀️"; position:absolute; right:18px; bottom:12px; font-size:24px; letter-spacing:5px; opacity:.85; pointer-events:none; }
+button, .button, .btn, .nav-link, .card, .project-card, .task-card, input, select, textarea { transition:background-color var(--aura-transition),border-color var(--aura-transition),box-shadow var(--aura-transition),transform var(--aura-transition); }
+
+
+/* AURA-OS page identity: a consistent label on every module, with a distinct dashboard */
+.page-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  margin-bottom: 10px;
+  border: 1px solid var(--season-border, rgba(255,125,77,.24));
+  border-radius: 999px;
+  background: var(--season-surface, rgba(255,125,77,.07));
+  letter-spacing: .14em;
+  font-size: .68rem;
+  line-height: 1.3;
+}
+body[data-aura-page="home"] .topbar {
+  padding: 20px 22px;
+  margin: 0 0 24px;
+  border: 1px solid var(--season-border, rgba(255,125,77,.22));
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse at 92% 8%, var(--season-glow, rgba(255,125,77,.12)), transparent 42%),
+    var(--card-bg, rgba(255,255,255,.02));
+}
+body[data-aura-page="home"] .topbar h1 {
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  letter-spacing: -.045em;
+}
+body[data-aura-page="home"] .welcome {
+  position: relative;
+  overflow: hidden;
+}
+body[data-aura-page="home"] .welcome::after {
+  content: "AURA  /  HOME";
+  position: absolute;
+  right: 24px;
+  bottom: 20px;
+  color: var(--season-accent, #ff754f);
+  opacity: .48;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .18em;
+  pointer-events: none;
+}
+body[data-aura-page="projects"] .topbar,
+body[data-aura-page="tasks"] .topbar,
+body[data-aura-page="finance"] .topbar,
+body[data-aura-page="dead-book"] .topbar,
+body[data-aura-page="day-tracker"] .topbar {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--season-border, rgba(255,125,77,.2));
+  margin-bottom: 24px;
+}
+
+/* === AURA OS finishing pass: consistent visual language across every module === */
+:root {
+  --aura-page-gutter: clamp(16px, 2.4vw, 34px);
+  --aura-focus-ring: 0 0 0 3px var(--aura-accent-soft);
+}
+html { scroll-behavior: smooth; }
+body { color: var(--aura-text); background-color: var(--aura-bg); }
+body, button, input, select, textarea { font-family: inherit; }
+.app { min-height: 100vh; }
+.main, main.main { min-width: 0; }
+.topbar { gap: 18px; }
+.topbar h1, h1 { color: var(--aura-text); text-wrap: balance; }
+.topbar p, .subtitle, .muted { color: var(--aura-muted); }
+.page-identity { color: var(--aura-accent); border-color: var(--aura-accent-border); background: var(--aura-accent-soft); }
+/* Shared controls: new sections inherit the seasonal palette automatically. */
+button, .button, .btn, input[type="button"], input[type="submit"], .nav-link, [role="button"] {
+  border-radius: var(--aura-radius-sm);
+  transition: background-color var(--aura-transition), color var(--aura-transition), border-color var(--aura-transition), box-shadow var(--aura-transition), transform var(--aura-transition);
+}
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--aura-accent); outline-offset: 3px; box-shadow: var(--aura-focus-ring);
+}
+input, select, textarea { color: var(--aura-text); accent-color: var(--aura-accent); }
+input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+  border-color: var(--aura-line);
+}
+input::placeholder, textarea::placeholder { color: var(--aura-muted); opacity: .78; }
+.card, .panel, .stat-card, .project-card, .task-card, .event-card, .note-card, .finance-card, .tracker-card {
+  border-color: var(--aura-line);
+  box-shadow: var(--aura-shadow);
+}
+hr, .divider { border-color: var(--aura-line); }
+.progress, progress { accent-color: var(--aura-accent); }
+::selection { color: var(--aura-accent-contrast); background: var(--aura-accent); }
+.seasonal-theme-chip { border-color: var(--aura-accent-border) !important; color: var(--aura-accent) !important; background: var(--aura-surface-2) !important; }
+.aura-season-countdown { border-color: var(--aura-accent-border) !important; background: color-mix(in srgb, var(--aura-surface) 88%, transparent) !important; }
+.aura-season-countdown-item { border-color: var(--aura-line) !important; background: var(--aura-surface-2) !important; }
+.aura-season-countdown-item.is-next, .aura-season-countdown-item.active { border-color: var(--aura-accent) !important; box-shadow: 0 0 0 1px var(--aura-accent-border), 0 8px 24px var(--aura-glow); }
+/* Keep seasonal decorations behind content and never block clicks. */
+.seasonal-decor, .seasonal-decor-static { pointer-events: none !important; }
+.seasonal-float { opacity: min(var(--opacity, .3), .34); }
+@media (max-width: 760px) {
+  .topbar { align-items: flex-start; flex-wrap: wrap; }
+  .aura-season-countdown { max-width: 100%; overflow-x: auto; }
+  .aura-season-countdown-items { min-width: 0; }
+  .seasonal-decor-static { right: 10px; bottom: 16px; font-size: 19px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .seasonal-float { display: none !important; }
+}

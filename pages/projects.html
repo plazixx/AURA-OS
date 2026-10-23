@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проекты — AURA OS</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/seasonal-design.css">
+
+    <style>
+        .projects-intro {
+            margin-top: 30px;
+            padding: 30px;
+        }
+
+        .project-toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .field,
+        .project-toolbar select,
+        .project-toolbar input,
+        .project-form input,
+        .project-form textarea,
+        .project-form select,
+        .subtask-input {
+            width: 100%;
+            background: #101012;
+            color: #f3f0ed;
+            border: 1px solid #303035;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font: inherit;
+            outline: none;
+        }
+
+        .field:focus,
+        .project-toolbar input:focus,
+        .project-form input:focus,
+        .project-form textarea:focus,
+        .project-form select:focus {
+            border-color: #ff794f;
+        }
+
+        .project-toolbar input {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .project-toolbar select {
+            width: auto;
+            min-width: 150px;
+        }
+
+        .action-button {
+            border: 0;
+            border-radius: 8px;
+            padding: 12px 17px;
+            background: #ff794f;
+            color: #17100e;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            filter: brightness(1.1);
+        }
+
+        .secondary-button {
+            border: 1px solid #38383e;
+            border-radius: 8px;
+            padding: 10px 13px;
+            background: #1b1b1f;
+            color: #f3f0ed;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .success-button {
+            border: 1px solid #326849;
+            border-radius: 8px;
+            padding: 10px 13px;
+            background: #14231b;
+            color: #85dcb0;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .danger-button {
+            border: 1px solid #5a302d;
+            border-radius: 8px;
+            padding: 10px 13px;
+            background: #241615;
+            color: #ff9a85;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .project-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .mini-stat {
+            background: #141416;
+            border: 1px solid #29292e;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .mini-stat span {
+            display: block;
+            color: #aaa7b0;
+            font-size: 12px;
+        }
+
+        .mini-stat strong {
+            display: block;
+            margin-top: 10px;
+            font: 700 26px 'Manrope', sans-serif;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .project-card {
+            min-width: 0;
+            background: #141416;
+            border: 1px solid #29292e;
+            border-radius: 13px;
+            padding: 21px;
+        }
+
+        .project-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .project-category {
+            color: #ff9473;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+        }
+
+        .project-title {
+            font: 700 19px 'Manrope', sans-serif;
+            margin: 10px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .project-description {
+            color: #aaa7b0;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .status-pill {
+            flex-shrink: 0;
+            border: 1px solid #454047;
+            border-radius: 30px;
+            padding: 6px 9px;
+            font-size: 10px;
+            color: #c5c1ca;
+        }
+
+        .status-pill[data-status="В процессе"] {
+            color: #ffb08f;
+            border-color: #75432f;
+        }
+
+        .status-pill[data-status="Завершён"] {
+            color: #85dcb0;
+            border-color: #326849;
+        }
+
+        .status-pill[data-status="На паузе"] {
+            color: #d2b6ff;
+            border-color: #55416f;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 22px;
+            font-size: 12px;
+        }
+
+        .progress-header strong {
+            color: #ff9473;
+        }
+
+        .progress-track {
+            height: 6px;
+            border-radius: 20px;
+            background: #303035;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #ff794f;
+            border-radius: inherit;
+            transition: width .2s;
+        }
+
+        .progress-caption {
+            color: #85838c;
+            font-size: 11px;
+        }
+
+        .subtask-section {
+            border-top: 1px solid #29292e;
+            margin-top: 19px;
+            padding-top: 17px;
+        }
+
+        .subtask-heading {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .subtask-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .subtask-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #101012;
+            border: 1px solid #252529;
+            border-radius: 8px;
+            padding: 11px;
+        }
+
+        .subtask-row input {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            accent-color: #ff794f;
+            cursor: pointer;
+        }
+
+        .subtask-text {
+            flex: 1;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .subtask-row.done .subtask-text {
+            color: #85838c;
+            text-decoration: line-through;
+        }
+
+        .remove-subtask {
+            background: none;
+            border: 0;
+            color: #85838c;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-subtask-form {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .add-subtask-form input {
+            flex: 1;
+            min-width: 0;
+            background: #101012;
+            color: #f3f0ed;
+            border: 1px solid #303035;
+            border-radius: 7px;
+            padding: 10px;
+            font: inherit;
+            font-size: 12px;
+        }
+
+        .add-subtask-form button {
+            background: #262126;
+            border: 1px solid #443039;
+            color: #ff9473;
+            border-radius: 7px;
+            padding: 0 12px;
+            cursor: pointer;
+        }
+
+        .project-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 15px;
+            margin-top: 15px;
+            color: #85838c;
+            font-size: 11px;
+        }
+
+        .project-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 17px;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            padding: 40px 20px;
+            border: 1px dashed #38383e;
+            border-radius: 12px;
+            text-align: center;
+            color: #85838c;
+            line-height: 1.8;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0, 0, 0, .78);
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-box {
+            width: min(100%, 560px);
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            background: #171719;
+            border: 1px solid #38383e;
+            border-radius: 14px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font: 700 21px 'Manrope', sans-serif;
+        }
+
+        .close-modal {
+            background: transparent;
+            color: #aaa7b0;
+            border: 0;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .project-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        .project-form label {
+            display: grid;
+            gap: 7px;
+            color: #c5c1ca;
+            font-size: 12px;
+        }
+
+        .project-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 5px;
+        }
+
+        .project-count {
+            color: #85838c;
+            font-size: 12px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 1000px) {
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .project-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .project-toolbar {
+                display: grid;
+            }
+
+            .project-toolbar select {
+                width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-intro {
+                padding: 23px;
+            }
+
+            .project-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body data-aura-page="projects">
+<div class="app">
+    <aside class="sidebar">
+        <div class="logo">AURA<span>.</span></div>
+        <p class="sidebar-label">РАБОЧЕЕ ПРОСТРАНСТВО</p>
+
+        <nav>
+                <a class="nav-link" href="../auth.html">🔐 Аккаунт</a>
+            <a class="nav-link" href="../index.html">🏠 Главная</a>
+            <a class="nav-link active" href="projects.html">📁 Проекты</a>
+            <a class="nav-link" href="tasks.html">✅ Задачи</a>
+                <a class="nav-link" href="finance.html">💰 Финансы</a>
+                <a class="nav-link" href="dead-book.html">📓 Мёртвая книга</a><a class="nav-link" href="day-tracker.html">📈 Трекер дня</a><a class="nav-link" href="calendar.html">📅 Календарь жизни</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="avatar">A</div>
+            <div>
+                <strong>Моё пространство</strong>
+                <small>Личная система</small>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <span class="eyebrow page-identity">02 / ПРОЕКТЫ И ЦЕЛИ</span>
+                <h1>Мои проекты</h1>
+            </div>
+            <div class="status"><span></span> Пространство идей</div>
+        </header>
+
+        <section class="welcome projects-intro">
+            <div>
+                <span class="eyebrow">ОТ ПЕРВОЙ ИДЕИ ДО РЕЗУЛЬТАТА</span>
+                <h2>Создавай.<br><span>Развивай.</span> Завершай.</h2>
+                <p>Собирай идеи, разбивай их на этапы и следи за своим прогрессом.</p>
+                <button class="action-button" id="open-create">+ Создать проект</button>
+            </div>
+            <div class="welcome-mark">MAKE<span>IT REAL</span></div>
+        </section>
+
+        <section class="project-stats">
+            <article class="mini-stat">
+                <span>Всего проектов</span>
+                <strong id="total-projects">0</strong>
+            </article>
+            <article class="mini-stat">
+                <span>В процессе</span>
+                <strong id="active-projects">0</strong>
+            </article>
+            <article class="mini-stat">
+                <span>Завершено</span>
+                <strong id="completed-projects">0</strong>
+            </article>
+        </section>
+
+        <section>
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">ТВОЯ КОЛЛЕКЦИЯ</span>
+                    <h2>Все проекты</h2>
+                </div>
+            </div>
+
+            <div class="project-toolbar">
+                <input id="search-projects" type="search" placeholder="Найти проект...">
+                <select id="filter-status" aria-label="Фильтр по статусу">
+                    <option value="all">Все статусы</option>
+                    <option value="Не начат">Не начат</option>
+                    <option value="В процессе">В процессе</option>
+                    <option value="На паузе">На паузе</option>
+                    <option value="Завершён">Завершён</option>
+                </select>
+                <button class="action-button" id="open-create-2">+ Новый проект</button>
+            </div>
+
+            <p class="project-count" id="project-count"></p>
+            <div class="project-grid" id="project-grid"></div>
+        </section>
+
+        <footer>AURA OS <span>·</span> БОЛЬШИЕ РЕЗУЛЬТАТЫ НАЧИНАЮТСЯ С ИДЕЙ.</footer>
+    </main>
+</div>
+
+<div class="modal" id="project-modal" role="dialog"
+     aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2 id="modal-title">Новый проект</h2>
+            <button type="button" class="close-modal" id="close-modal"
+                    aria-label="Закрыть">×</button>
+        </div>
+
+        <form class="project-form" id="project-form">
+            <label>
+                Название проекта *
+                <input id="project-name" required maxlength="120"
+                       placeholder="Например: Написание книги">
+            </label>
+
+            <label>
+                Описание
+                <textarea id="project-description" maxlength="3000"
+                          placeholder="Цель, идеи, подробности проекта..."></textarea>
+            </label>
+
+            <div class="form-row">
+                <label>
+                    Категория
+                    <input id="project-category" maxlength="60"
+                           placeholder="Например: Творчество">
+                </label>
+                <label>
+                    Статус
+                    <select id="project-status">
+                        <option>Не начат</option>
+                        <option selected>В процессе</option>
+                        <option>На паузе</option>
+                        <option>Завершён</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="form-row">
+                <label>
+                    Приоритет
+                    <select id="project-priority">
+                        <option>Низкий</option>
+                        <option selected>Средний</option>
+                        <option>Высокий</option>
+                    </select>
+                </label>
+                <label>
+                    Дедлайн
+                    <input id="project-deadline" type="date">
+                </label>
+            </div>
+
+            <label>
+                Первые подпункты (каждый с новой строки)
+                <textarea id="project-subtasks" maxlength="5000"
+                          placeholder="Продумать идею&#10;Составить план&#10;Выполнить первый этап"></textarea>
+            </label>
+
+            <div class="modal-actions">
+                <button type="button" class="secondary-button" id="cancel-modal">
+                    Отмена
+                </button>
+                <button type="submit" class="action-button" id="save-project">
+                    Создать проект
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(() => {
+    'use strict';
+
+    const STORAGE_KEY = 'aura-os-projects-v1';
+    const $ = id => document.getElementById(id);
+
+    const grid = $('project-grid');
+    const modal = $('project-modal');
+    const form = $('project-form');
+
+    let projects = [];
+    let editingId = null;
+
+    try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (Array.isArray(saved)) {
+            projects = saved
+                .filter(p => p && typeof p === 'object' && p.id)
+                .map(p => {
+                    const project = {
+                        id: String(p.id),
+                        name: String(p.name || 'Без названия'),
+                        description: String(p.description || ''),
+                        category: String(p.category || 'Без категории'),
+                        status: ['Не начат', 'В процессе', 'На паузе', 'Завершён'].includes(p.status)
+                            ? p.status : 'Не начат',
+                        priority: ['Низкий', 'Средний', 'Высокий'].includes(p.priority)
+                            ? p.priority : 'Средний',
+                        deadline: String(p.deadline || ''),
+                        completedAt: String(p.completedAt || ''),
+                        subtasks: Array.isArray(p.subtasks)
+                            ? p.subtasks.filter(s => s && typeof s === 'object')
+                                .map(s => ({
+                                    id: String(s.id || makeId()),
+                                    text: String(s.text || ''),
+                                    done: Boolean(s.done)
+                                }))
+                                .filter(s => s.text.trim())
+                            : []
+                    };
+
+                    // Если все имеющиеся подпункты отмечены, статус проекта тоже завершён.
+                    // Не меняем проекты без подпунктов и не трогаем паузу.
+                    if (project.subtasks.length > 0 &&
+                        project.subtasks.every(s => s.done)) {
+                        project.status = 'Завершён';
+                        if (!project.completedAt) {
+                            project.completedAt = new Date().toISOString();
+                        }
+                    }
+
+                    return project;
+                });
+
+            // Сохраняем согласованный статус, чтобы главная страница тоже его увидела.
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+        }
+    } catch (error) {
+        console.error('Не удалось загрузить проекты:', error);
+        projects = [];
+    }
+
+    function makeId() {
+        return Date.now().toString(36) +
+            Math.random().toString(36).slice(2, 10);
+    }
+
+    function saveProjects() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+            return true;
+        } catch (error) {
+            alert('Не удалось сохранить данные. Возможно, хранилище браузера заполнено.');
+            console.error(error);
+            return false;
+        }
+    }
+
+    function progress(project) {
+        const total = project.subtasks.length;
+        const done = project.subtasks.filter(s => s.done).length;
+        return {
+            total,
+            done,
+            percent: total ? Math.round(done / total * 100) : 0
+        };
+    }
+
+    function escapeText(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    function formatDate(value) {
+        if (!value) return '';
+        const parts = value.split('-');
+        if (parts.length !== 3) return value;
+        return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+
+    function renderStats() {
+        $('total-projects').textContent = projects.length;
+        $('active-projects').textContent =
+            projects.filter(p => p.status === 'В процессе').length;
+        $('completed-projects').textContent =
+            projects.filter(p => p.status === 'Завершён').length;
+    }
+
+    function renderProjects() {
+        renderStats();
+
+        const query = $('search-projects').value.trim().toLowerCase();
+        const status = $('filter-status').value;
+
+        const visible = projects.filter(project => {
+            const searchable = [
+                project.name,
+                project.description,
+                project.category,
+                ...project.subtasks.map(s => s.text)
+            ].join(' ').toLowerCase();
+
+            return searchable.includes(query) &&
+                (status === 'all' || project.status === status);
+        });
+
+        $('project-count').textContent =
+            `Показано проектов: ${visible.length} из ${projects.length}`;
+
+        grid.replaceChildren();
+
+        if (!visible.length) {
+            const empty = document.createElement('div');
+            empty.className = 'empty-state';
+            empty.textContent = projects.length
+                ? 'Ничего не найдено. Попробуй изменить поиск или фильтр.'
+                : 'Здесь пока нет проектов. Создай первый — добавь название, описание и этапы.';
+            grid.appendChild(empty);
+            return;
+        }
+
+        visible.forEach(project => {
+            const p = progress(project);
+            const card = document.createElement('article');
+            card.className = 'project-card';
+
+            const subtaskMarkup = project.subtasks.length
+                ? project.subtasks.map(task => `
+                    <div class="subtask-row ${task.done ? 'done' : ''}">
+                        <input type="checkbox"
+                            data-action="toggle-subtask"
+                            data-project-id="${escapeText(project.id)}"
+                            data-subtask-id="${escapeText(task.id)}"
+                            aria-label="Отметить подпункт"
+                            ${task.done ? 'checked' : ''}>
+                        <span class="subtask-text">${escapeText(task.text)}</span>
+                        <button type="button" class="remove-subtask"
+                            data-action="remove-subtask"
+                            data-project-id="${escapeText(project.id)}"
+                            data-subtask-id="${escapeText(task.id)}"
+                            aria-label="Удалить подпункт">×</button>
+                    </div>
+                `).join('')
+                : '<p class="progress-caption">Подпунктов пока нет — добавь первый ниже.</p>';
+
+            const deadline = project.deadline
+                ? `<span>◷ Срок: ${escapeText(formatDate(project.deadline))}</span>`
+                : '';
+
+            card.innerHTML = `
+                <div class="project-card-top">
+                    <div>
+                        <div class="project-category">${escapeText(project.category || 'Без категории')}</div>
+                        <h3 class="project-title">${escapeText(project.name)}</h3>
+                    </div>
+                    <span class="status-pill"
+                        data-status="${escapeText(project.status)}">
+                        ${escapeText(project.status)}
+                    </span>
+                </div>
+
+                <div class="project-description">${
+                    escapeText(project.description || 'Описание пока не добавлено.')
+                }</div>
+
+                <div class="project-meta">
+                    <span>Приоритет: ${escapeText(project.priority)}</span>
+                    ${deadline}
+                </div>
+
+                <div class="progress-header">
+                    <span>Прогресс проекта</span>
+                    <strong>${p.percent}%</strong>
+                </div>
+                <div class="progress-track" role="progressbar"
+                    aria-label="Прогресс проекта"
+                    aria-valuenow="${p.percent}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-fill" style="width:${p.percent}%"></div>
+                </div>
+                <div class="progress-caption">
+                    ${p.done} из ${p.total} подпунктов выполнено
+                </div>
+
+                <div class="subtask-section">
+                    <div class="subtask-heading">
+                        <span>Этапы и подпункты</span>
+                        <span>${p.done}/${p.total}</span>
+                    </div>
+                    <div class="subtask-list">${subtaskMarkup}</div>
+
+                    <form class="add-subtask-form"
+                        data-project-id="${escapeText(project.id)}">
+                        <input class="subtask-input" name="subtask"
+                            maxlength="200" required
+                            placeholder="Добавить новый подпункт...">
+                        <button type="submit" aria-label="Добавить подпункт">+</button>
+                    </form>
+                </div>
+
+                <div class="project-actions">
+                    <button type="button" class="success-button"
+                        data-action="finish" data-project-id="${escapeText(project.id)}">
+                        ${project.status === 'Завершён' ? '↶ Возобновить' : '✓ Завершить проект'}
+                    </button>
+                    <button type="button" class="secondary-button"
+                        data-action="edit" data-project-id="${escapeText(project.id)}">
+                        Редактировать
+                    </button>
+                    <button type="button" class="secondary-button"
+                        data-action="change-status" data-project-id="${escapeText(project.id)}">
+                        Изменить статус
+                    </button>
+                    <button type="button" class="danger-button"
+                        data-action="delete" data-project-id="${escapeText(project.id)}">
+                        Удалить
+                    </button>
+                </div>
+            `;
+
+            grid.appendChild(card);
+        });
+    }
+
+    function openModal(project = null) {
+        editingId = project ? project.id : null;
+        form.reset();
+
+        $('modal-title').textContent =
+            project ? 'Редактировать проект' : 'Новый проект';
+        $('save-project').textContent =
+            project ? 'Сохранить изменения' : 'Создать проект';
+
+        if (project) {
+            $('project-name').value = project.name;
+            $('project-description').value = project.description;
+            $('project-category').value =
+                project.category === 'Без категории' ? '' : project.category;
+            $('project-status').value = project.status;
+            $('project-priority').value = project.priority;
+            $('project-deadline').value = project.deadline;
+            $('project-subtasks').value =
+                project.subtasks.map(s => s.text).join('\n');
+        }
+
+        modal.classList.add('open');
+        $('project-name').focus();
+    }
+
+    function closeModal() {
+        modal.classList.remove('open');
+        editingId = null;
+    }
+
+    function getSubtasksFromForm() {
+        return $('project-subtasks').value
+            .split('\n')
+            .map(text => text.trim())
+            .filter(Boolean)
+            .map(text => ({ id: makeId(), text, done: false }));
+    }
+
+    $('open-create').addEventListener('click', () => openModal());
+    $('open-create-2').addEventListener('click', () => openModal());
+    $('close-modal').addEventListener('click', closeModal);
+    $('cancel-modal').addEventListener('click', closeModal);
+
+    modal.addEventListener('click', event => {
+        if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && modal.classList.contains('open')) {
+            closeModal();
+        }
+    });
+
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const name = $('project-name').value.trim();
+        if (!name) {
+            $('project-name').focus();
+            return;
+        }
+
+        const data = {
+            name,
+            description: $('project-description').value.trim(),
+            category: $('project-category').value.trim() || 'Без категории',
+            status: $('project-status').value,
+            priority: $('project-priority').value,
+            deadline: $('project-deadline').value
+        };
+
+        if (editingId) {
+            const project = projects.find(p => p.id === editingId);
+            if (!project) return;
+
+            Object.assign(project, data);
+
+            // Сохраняем существующие отметки для подпунктов,
+            // которые остались в списке после редактирования.
+            const oldTasks = project.subtasks;
+            const newTexts = $('project-subtasks').value
+                .split('\n').map(t => t.trim()).filter(Boolean);
+
+            project.subtasks = newTexts.map(text => {
+                const old = oldTasks.find(s => s.text === text);
+                return old || { id: makeId(), text, done: false };
+            });
+        } else {
+            projects.unshift({
+                id: makeId(),
+                ...data,
+                subtasks: getSubtasksFromForm(),
+                createdAt: new Date().toISOString()
+            });
+        }
+
+        if (saveProjects()) {
+            closeModal();
+            renderProjects();
+        }
+    });
+
+    $('search-projects').addEventListener('input', renderProjects);
+    $('filter-status').addEventListener('change', renderProjects);
+
+    grid.addEventListener('change', event => {
+        const checkbox = event.target.closest('[data-action="toggle-subtask"]');
+        if (!checkbox) return;
+
+        const project = projects.find(p => p.id === checkbox.dataset.projectId);
+        const task = project?.subtasks.find(s => s.id === checkbox.dataset.subtaskId);
+        if (!task) return;
+
+        task.done = checkbox.checked;
+
+        if (task.done && project.status === 'Не начат') {
+            project.status = 'В процессе';
+        }
+
+        if (project.subtasks.length &&
+            project.subtasks.every(s => s.done)) {
+            project.status = 'Завершён';
+        } else if (project.status === 'Завершён') {
+            project.status = 'В процессе';
+        }
+
+        saveProjects();
+        renderProjects();
+    });
+
+    grid.addEventListener('submit', event => {
+        const subtaskForm = event.target.closest('.add-subtask-form');
+        if (!subtaskForm) return;
+
+        event.preventDefault();
+
+        const project = projects.find(
+            p => p.id === subtaskForm.dataset.projectId
+        );
+        const input = subtaskForm.elements.subtask;
+        const text = input.value.trim();
+
+        if (!project || !text) return;
+
+        project.subtasks.push({
+            id: makeId(),
+            text,
+            done: false
+        });
+
+        if (project.status === 'Не начат') {
+            project.status = 'В процессе';
+        }
+
+        saveProjects();
+        renderProjects();
+    });
+
+    grid.addEventListener('click', event => {
+        const button = event.target.closest('[data-action]');
+        if (!button) return;
+
+        const project = projects.find(
+            p => p.id === button.dataset.projectId
+        );
+        if (!project) return;
+
+        switch (button.dataset.action) {
+            case 'edit':
+                openModal(project);
+                break;
+
+            case 'finish':
+                if (project.status === 'Завершён') {
+                    project.status = project.subtasks.some(s => s.done)
+                        ? 'В процессе'
+                        : 'Не начат';
+                } else {
+                    project.status = 'Завершён';
+                    project.completedAt = new Date().toISOString();
+                }
+                saveProjects();
+                renderProjects();
+                break;
+
+            case 'delete':
+                if (confirm(`Удалить проект «${project.name}» и все его подпункты?`)) {
+                    projects = projects.filter(p => p.id !== project.id);
+                    saveProjects();
+                    renderProjects();
+                }
+                break;
+
+            case 'remove-subtask':
+                project.subtasks = project.subtasks.filter(
+                    s => s.id !== button.dataset.subtaskId
+                );
+                if (project.status === 'Завершён' &&
+                    project.subtasks.some(s => !s.done)) {
+                    project.status = 'В процессе';
+                }
+                saveProjects();
+                renderProjects();
+                break;
+
+            case 'change-status': {
+                const statuses = ['Не начат', 'В процессе', 'На паузе', 'Завершён'];
+                const current = statuses.indexOf(project.status);
+                project.status = statuses[(current + 1) % statuses.length];
+                saveProjects();
+                renderProjects();
+                break;
+            }
+        }
+    });
+
+    renderProjects();
+})();
+</script>
+    <script src="../js/seasonal-theme.js"></script>
+</body>
+</html>
