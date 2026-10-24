@@ -1,12 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Пример изоляции личных данных по UID. Применяй только после того,
-    // как структура коллекций будет согласована с кодом синхронизации.
+    // Each account can read/write only its own AURA-OS data.
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-    // Всё, что не описано выше, закрыто по умолчанию.
-    match /{document=**} { allow read, write: if false; }
   }
 }
